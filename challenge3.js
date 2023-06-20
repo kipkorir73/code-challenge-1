@@ -1,51 +1,48 @@
-const basicSalary = 40000;
-const benefits = 8000;
+function netsalary() {
+  const basicSalary = parseFloat(prompt("Enter the basic salary:"));
+  const benefits = parseFloat(prompt("Enter the benefits:"));
 
-function netsalary(Basicsalary, Benefits) {
-    const taxRates = {
-        //  corresponding tax rates
-        Rates: [
-          { min: 0, max: 24000, rate: 10 },
-          { min: 24001, max: 32333, rate: 25 },
-          { Above: 32333, rate: 30 },
-        ],
-      
-    
-      };
-    
-      const grossSalary = basicSalary + benefits;
+  const taxRates = {
+    rates: [
+      { min: 0, max: 24000, rate: 10 },
+      { min: 24001, max: 32333, rate: 25 },
+      { above: 32333, rate: 30 },
+    ],
+  };
 
-      // Calculate tax
-      const tax = 0;
-    
-      if (grossSalary <= 24000) {
-        tax = (grossSalary * taxRates.Rates[0].rate) / 100;
-      } else if (grossSalary > 24000 && grossSalary <= 32333) {
-        tax =
-          (24000 * taxRates.Rates[0].rate +
-            (grossSalary - 24000) * taxRates.Rates[1].rate) /
-          100;
+  const grossSalary = basicSalary + benefits;
+
+  let tax = 0;
+
+  for (const rate of taxRates.rates) {
+    if (grossSalary > rate.min) {
+      if (rate.max && grossSalary > rate.max) {
+        tax += (rate.max - rate.min + 1) * (rate.rate / 100);
       } else {
-        tax =
-          (24000 * taxRates.Rates[0].rate +
-            (32333 - 24000) * taxRates.Rates[1].rate +
-            (grossSalary - 32333) * taxRates.Rates[2].rate) /
-          100;
+        tax += (grossSalary - rate.min + 1) * (rate.rate / 100);
       }
-    
-      // Calculating net salary
-      const netSalary = grossSalary - tax;
-    
-    
-      return {
-        grossSalary,
-        tax,
-        netSalary,
-      };
+    } else {
+      break;
     }
-    const result = netsalary(basicSalary, benefits);
-    
-    console.log("Gross Salary:", result.grossSalary);
-    console.log("Tax:", result.tax);
-    console.log("Net Salary:", result.netSalary);   
+  }
 
+  const nhifDeductions = 0.02 * grossSalary; // NHIF deductions (2% of gross salary)
+  const nssfDeductions = 0.05 * grossSalary; // NSSF deductions (5% of gross salary)
+  const netSalary = grossSalary - tax - nhifDeductions - nssfDeductions;
+
+  return {
+    grossSalary,
+    tax,
+    nhifDeductions,
+    nssfDeductions,
+    netSalary,
+  };
+}
+
+const result = netsalary();
+
+console.log("Gross Salary:", result.grossSalary);
+console.log("Tax:", result.tax);
+console.log("NHIF Deductions:", result.nhifDeductions);
+console.log("NSSF Deductions:", result.nssfDeductions);
+console.log("Net Salary:", result.netSalary);
