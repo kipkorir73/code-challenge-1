@@ -1,4 +1,5 @@
-const speed = 80;
+const speedString = prompt('Enter speed');
+const speed = parseInt(speedString);
 
 function speedcheck(speed) {
     const speedlimit = 70;
